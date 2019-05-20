@@ -1,0 +1,16 @@
+{
+    "configurations": [
+        {
+            "type": "java",
+            "name": "CodeLens (Launch) - Painel",
+            "request": "launch",
+            "mainClass": "br.com.uva.Painel"
+        },
+        {
+            "type": "java",
+            "name": "CodeLens (Launch) - Login",
+            "request": "launch",
+            "mainClass": "br.com.uva.Login"
+        }
+    ]
+}
