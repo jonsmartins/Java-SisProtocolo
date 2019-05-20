@@ -9,7 +9,7 @@ import javax.swing.JTextField;
 
 public class Login {
 	public static void main(String args[]) {
-		// come�a a preparar a janela Home
+		// começa a preparar a janela Home
 		JFrame frame = new JFrame("HOME");
 
 		// Cria label e textField do Login
@@ -31,7 +31,7 @@ public class Login {
 		logo.setVisible(true);
 
 
-		// Cria bot�o entrar
+		// Cria botao entrar
 		JButton btnEntrar = new JButton("Entrar");
 		btnEntrar.setBounds(250, 160, 100, 50);;
 
