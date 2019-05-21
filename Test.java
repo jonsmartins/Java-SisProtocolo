@@ -5,6 +5,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.LineNumberReader;
 import java.io.PrintWriter;
@@ -16,12 +17,10 @@ class Test {
 
 	public static void main(String ar[]) throws IOException {
 		Test test = new Test();
-		// test.setInformacao();
-		// test.getInformacao();
-		// test.updateInformacao();
-		// test.getInformacao();
-		// test.tTT();
-		 System.out.println(test.contaLinhas());
+// 		test.setInformacao();
+//		test.updateData();
+//		test.getNextId();
+//		System.out.println(test.contaLinhas());
 	}
 
 	public String[][] getLinhas() throws IOException {
@@ -64,24 +63,32 @@ class Test {
 		return qtdLinha;
 	}
 
-	public void getInformacao() {
+	public void removeData(int lineToRemove) {
 		try {
 			BufferedReader br = new BufferedReader(new FileReader("database.txt"));
-			String string = "";
-			while ((string = br.readLine()) != null) {
-				String data[] = new String[contaLinhas()];
-				data = string.split(",");
-				for (int i = 0; i < contaLinhas(); i++) {
-					System.out.print(data[i] + " ");
-				}
-				System.out.println();
-			}
-		} catch (Exception e) {
+			StringBuffer sb = new StringBuffer("");
+			int linenumber = 1;
+			String line;
 
+			while ((line = br.readLine()) != null) {
+				if (linenumber < lineToRemove || linenumber >= lineToRemove + 1) {
+					sb.append(line + String.format("%n", ""));
+				}
+				linenumber++;
+			}
+			if (lineToRemove + 1 > linenumber)
+				System.out.println("Fim do arquivo");
+			br.close();
+
+			FileWriter fw = new FileWriter(new File("database.txt"));
+			fw.write(sb.toString());
+			fw.close();
+		} catch (Exception e) {
+			e.printStackTrace();
 		}
 	}
 
-	public void setInformacao() {
+	public void setData(String nome, String idade) {
 		try {
 			File myObj = new File("database.txt");
 			if (myObj.createNewFile()) {
@@ -94,91 +101,48 @@ class Test {
 			e.printStackTrace();
 		}
 
-		Scanner sc = new Scanner(System.in);
-		System.out.println("Entre com o id:");
-		String id = sc.nextLine();
-		System.out.println("Entre com o seu nome:");
-		String nome = sc.nextLine();
-		System.out.println("Entre com a sua idade:");
-		String idade = sc.nextLine();
-
 		try {
 			File f = new File("database.txt");
 			PrintWriter pw = new PrintWriter(new FileOutputStream(f, true));
-			pw.append(id + "," + nome + "," + idade + String.format("%n", ""));
+			pw.append(getNextId() + "," + nome + "," + idade + String.format("%n", ""));
 			pw.close();
 		} catch (Exception e) {
 			System.out.println("e: " + e);
 		}
 	}
 
-	public void updateInformacao() {
-		////////// FASE 1
-		System.out.println("Qual id?");
-		Scanner sc = new Scanner(System.in);
-		int id_to_change = sc.nextInt();
-		String to_change_column_names[] = { "Nome", "Idade" };
-		int yes_no[] = new int[2];
-		String to_update[] = new String[5];
-
-		System.out.println("Quais colunas devo atualizar? (0:NÃO / 1:SIM");
-		for (int i = 0; i < 2; i++) {
-			System.out.println(to_change_column_names[i] + "");
-			int temp = sc.nextInt();
-			yes_no[i] = temp;
+	public int getNextId() throws IOException {
+		if (contaLinhas() == 0) {
+			return 1;
 		}
+		int max = 0;
+		for (int i = 0; i < contaLinhas(); i++) {
+			max = Integer.parseInt(getLinhas()[i][0]);
+			if (max < Integer.parseInt(getLinhas()[i][0])) {
+				max = Integer.parseInt(getLinhas()[i][0]);
+			}
+		}
+		return max + 1;
+	}
 
-		////////// FASE 2
-		System.out.println("===============================");
-		System.out.println("Adicionar novos valores para as colunas");
-		for (int i = 0; i < 2; i++) {
-			System.out.println(to_change_column_names[i] + "");
-			if (yes_no[i] == 1) {
-				Scanner sc1 = new Scanner(System.in);
-				String temp_val = sc1.nextLine();
-				to_update[i] = temp_val;
-				System.out.println();
+	public void updateData(String[] strings) throws IOException {
+		BufferedReader br = new BufferedReader(new FileReader("database.txt"));
+		StringBuffer sb = new StringBuffer("");
+		int linenumber = 1;
+		String line;
+
+		while ((line = br.readLine()) != null) {
+			if (Integer.parseInt(strings[0]) == linenumber) {
+				sb.append(strings[0] + "," + strings[1] + "," + strings[2] + String.format("%n", ""));
 			} else {
-				System.out.println("nao pode ser mudado");
+				sb.append(line + String.format("%n", ""));
 			}
+			linenumber++;
 		}
-
-		////////// FASE 3
-		StringBuffer sb = new StringBuffer();
-		try {
-			BufferedReader br = new BufferedReader(new FileReader("database.txt"));
-			String string = "";
-			while ((string = br.readLine()) != null) {
-				String data[] = new String[5];
-				data = string.split(",");
-				if (id_to_change == Integer.parseInt(data[0])) {
-					String row = data[0] + ",";
-					for (int i = 0; i < 2; i++) {
-						if (yes_no[i] == 1) {
-							System.out.printf("row " + row + String.format("%n", ""));
-							System.out.printf("to_update[i] " + to_update[i] + String.format("%n", ""));
-							row = row + to_update[i] + ",";
-						} else {
-							System.out.printf("ELSE " + row, String.format("%n", ""));
-							row = row + data[i] + ",";
-						}
-					}
-					System.out.printf("fora do FOR " + row + String.format("%n", ""));
-					sb.append(row);
-					sb.append(String.format("%n", ""));
-				} else {
-					sb.append(string);
-					sb.append(String.format("%n", ""));
-				}
-
-				////////// FASE 4
-				File f = new File("database.txt");
-				PrintWriter pw = new PrintWriter(new FileOutputStream(f, false));
-				pw.print(sb.toString());
-				pw.close();
-			}
-		} catch (Exception e) {
-
-		}
+		br.close();
+		File f = new File("database.txt");
+		PrintWriter pw = new PrintWriter(new FileOutputStream(f, false));
+		pw.print(sb.toString());
+		pw.close();
 	}
 }
