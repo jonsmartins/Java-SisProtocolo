@@ -1,3 +1,4 @@
+package br.com.uva;
 public class Usuarios{
     String usuario;
     String senha;
