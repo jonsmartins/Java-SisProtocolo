@@ -25,15 +25,15 @@ public class Painel {
 	Test ts = new Test();
 	int selectedElement = -1;
 
-	public static void main(String[] args) throws IOException {
-		new Painel().montaTela();
-	}
+	//public static void main(String[] args) throws IOException {
+	//	new Painel().montaTela();
+	//}
 
-	public void montaTela() throws IOException {
+	public JFrame montaTela() throws IOException {
 
-		frame.setBounds(100, 100, 450, 300);
+		frame.setBounds(800, 400, 450, 300);
 		frame.getContentPane().setLayout(null);
-		frame.setVisible(true);
+		frame.setVisible(false);
 
 		frame.getContentPane().add(montaBtnAdicionar());
 		frame.getContentPane().add(montaBtnEditar());
@@ -55,6 +55,7 @@ public class Painel {
 			}
 		});
 		scrollPane.setViewportView(table);
+		return frame;
 	}
 
 	public JButton montaBtnEditar() {
@@ -100,7 +101,6 @@ public class Painel {
 							valueTochange[2] = textFieldIdade.getText();
 							try {
 								ts.updateData(valueTochange);
-								frame.setVisible(false);
 								new Painel().montaTela();
 							} catch (IOException e1) {
 								// TODO Auto-generated catch block
@@ -130,7 +130,6 @@ public class Painel {
 					try {
 						System.out.println(selectedElement);
 						ts.removeData(selectedElement);
-						frame.setVisible(false);
 						new Painel().montaTela();
 					} catch (IOException e1) {
 						e1.printStackTrace();
@@ -179,7 +178,6 @@ public class Painel {
 						frameAddItem.setVisible(false);
 						try {
 							ts.setData(textFieldNome.getText(), textFieldIdade.getText());
-							frame.setVisible(false);
 							new Painel().montaTela();
 						} catch (IOException e1) {
 							e1.printStackTrace();

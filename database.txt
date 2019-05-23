@@ -1,8 +1,7 @@
-0,tedd,19
-1,tedd,19
+1,doug,40
 2,tedd,19
 3,tedd,19
 4,tedd,19
 5,tedd,19
 6,tedd,19
-7,tedd,19
+8,jonas,25
