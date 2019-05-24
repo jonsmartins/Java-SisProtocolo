@@ -28,10 +28,10 @@ public class Painel {
 	int selectedElement = -1;
 	String[] rowSelected = new String[3];
 
-	public static void main(String[] args) throws IOException {
-		Painel pn = new Painel(ts.getLinhas(), "");
-		pn.montaTela();
-	}
+	//public static void main(String[] args) throws IOException {
+	//	Painel pn = new Painel(ts.getLinhas(), "");
+	//pn.montaTela();
+	//}
 
 	Painel(String[][] linhas, String textFieldBuscar) {
 		linhas_tabela = linhas;
@@ -44,7 +44,7 @@ public class Painel {
 		frame.getContentPane().add(montaBtnEditar());
 		frame.getContentPane().add(montaBtnRemover());
 
-		frame.setBounds(100, 100, 550, 400);
+		frame.setBounds(800, 400, 550, 400);
 		frame.getContentPane().setLayout(null);
 		frame.setVisible(true);
 
@@ -138,7 +138,7 @@ public class Painel {
 			public void actionPerformed(ActionEvent e) {
 				if (selectedElement > 0) {
 					JFrame frameEditItem = new JFrame("Editar");
-					frameEditItem.setBounds(100, 100, 500, 350);
+					frameEditItem.setBounds(800, 400, 500, 350);
 					frameEditItem.getContentPane().setLayout(null);
 					frameEditItem.setVisible(true);
 
@@ -215,7 +215,7 @@ public class Painel {
 		btnAdicionar.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				JFrame frameAddItem = new JFrame("Adicionar novo");
-				frameAddItem.setBounds(100, 100, 500, 350);
+				frameAddItem.setBounds(800, 400, 500, 350);
 				frameAddItem.getContentPane().setLayout(null);
 				frameAddItem.setVisible(true);
 

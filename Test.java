@@ -15,9 +15,9 @@ import java.util.Scanner;
 
 class Test {
 
-	public static void main(String ar[]) throws IOException {
-//		Test test = new Test();
-	}
+	//public static void main(String ar[]) throws IOException {
+	//	Test test = new Test();
+	//}
 
 	public String[][] getLinhas() throws IOException {
 		Scanner sc = new Scanner(new File("database.txt"));
