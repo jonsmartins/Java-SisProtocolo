@@ -3,6 +3,7 @@ package br.com.uva;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.IOException;
+import java.util.HashMap;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -10,61 +11,132 @@ import javax.swing.JLabel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
-import javax.swing.ListSelectionModel;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.table.DefaultTableModel;
 
 public class Painel {
 	JFrame frame = new JFrame("Painel");
-	JTable table = new JTable() {
-		public boolean isCellEditable(int rowIndex, int vColIndex) {
-			return false;
-		}
-	};
-	Test ts = new Test();
+	JScrollPane scrollPane = new JScrollPane();
+	JTable table = new JTable();
+	JTextField textFieldBuscar = new JTextField();
+	static Test ts = new Test();
+
+	String[][] linhas_tabela;
+	String valorDeBusca;
+
 	int selectedElement = -1;
+	String[] rowSelected = new String[3];
 
-	//public static void main(String[] args) throws IOException {
-	//	new Painel().montaTela();
-	//}
+	public static void main(String[] args) throws IOException {
+		Painel pn = new Painel(ts.getLinhas(), "");
+		pn.montaTela();
+	}
 
-	public JFrame montaTela() throws IOException {
+	Painel(String[][] linhas, String textFieldBuscar) {
+		linhas_tabela = linhas;
+		valorDeBusca = textFieldBuscar;
+	}
 
-		frame.setBounds(800, 400, 450, 300);
-		frame.getContentPane().setLayout(null);
-		frame.setVisible(false);
-
+	public void montaTela() throws IOException {
+		montaComponentsDeFiltro();
 		frame.getContentPane().add(montaBtnAdicionar());
 		frame.getContentPane().add(montaBtnEditar());
 		frame.getContentPane().add(montaBtnRemover());
 
-		JScrollPane scrollPane = new JScrollPane();
-		scrollPane.setBounds(20, 20, 240, 190);
+		frame.setBounds(100, 100, 550, 400);
+		frame.getContentPane().setLayout(null);
+		frame.setVisible(true);
+
+		scrollPane.setBounds(20, 100, 240, 190);
 		frame.getContentPane().add(scrollPane);
 
-		table.setModel(new DefaultTableModel(ts.getLinhas(), ts.getColunas()));
-		table.setRowSelectionAllowed(true);
+		if (linhas_tabela.length > 0) {
+			montaTabela();
+		}
+	}
 
-		ListSelectionModel select = table.getSelectionModel();
-		select.addListSelectionListener(new ListSelectionListener() {
-			public void valueChanged(ListSelectionEvent e) {
-				for (int i = 0; i < table.getSelectedRows().length; i++) {
-					selectedElement = (table.getSelectedRows()[i] + 1);
+	public void montaTabela() throws IOException {
+		table.setModel(new DefaultTableModel(linhas_tabela, ts.getColunas()));
+		table.setRowSelectionAllowed(true);
+		table.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
+			public void valueChanged(ListSelectionEvent event) {
+				selectedElement = Integer.parseInt(table.getValueAt(table.getSelectedRow(), 0).toString());
+				for (int i = 0; i < rowSelected.length; i++) {
+					rowSelected[i] = table.getValueAt(table.getSelectedRow(), i).toString();
 				}
 			}
 		});
 		scrollPane.setViewportView(table);
-		return frame;
+	}
+
+	public String[][] filtrarDados(String dadoBuscado) throws IOException {
+		int qtdLinhas = 0;
+		HashMap<Integer, String[]> lista = new HashMap<Integer, String[]>();
+		for (int i = 0; i < ts.contaLinhas(); i++) {
+			for (int j = 0; j < ts.getColunas().length; j++) {
+				if (i < ts.contaLinhas() && ts.getLinhas()[i][j].contains(dadoBuscado)) {
+					lista.put(qtdLinhas, ts.getLinhas()[i]);
+					qtdLinhas++;
+					j = 0;
+					i++;
+				}
+			}
+		}
+
+		String[][] linhasTabela = new String[qtdLinhas][ts.getColunas().length];
+		for (int i = 0; i < qtdLinhas; i++) {
+			linhasTabela[i] = lista.get(i);
+		}
+
+		return linhasTabela;
+	}
+
+	public void montaComponentsDeFiltro() {
+		JLabel labelBuscar = new JLabel("Buscar");
+		labelBuscar.setBounds(20, 20, 100, 30);
+		textFieldBuscar.setText(valorDeBusca);
+		textFieldBuscar.setBounds(20, 50, 240, 25);
+
+		JButton btnBuscar = new JButton("Buscar");
+		btnBuscar.setBounds(300, 50, 95, 25);
+		JButton btnLimpar = new JButton("Limpar");
+		btnLimpar.setBounds(400, 50, 95, 25);
+
+		btnBuscar.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				frame.setVisible(false);
+				try {
+					new Painel(filtrarDados(textFieldBuscar.getText()), textFieldBuscar.getText()).montaTela();
+				} catch (IOException e1) {
+					e1.printStackTrace();
+				}
+			}
+		});
+
+		btnLimpar.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				frame.setVisible(false);
+				try {
+					new Painel(ts.getLinhas(), "").montaTela();
+				} catch (IOException e1) {
+					e1.printStackTrace();
+				}
+			}
+		});
+
+		frame.getContentPane().add(labelBuscar);
+		frame.getContentPane().add(textFieldBuscar);
+		frame.getContentPane().add(btnBuscar);
+		frame.getContentPane().add(btnLimpar);
 	}
 
 	public JButton montaBtnEditar() {
 		JButton btnEditar = new JButton("Editar");
-		btnEditar.setBounds(300, 80, 95, 25);
-
+		btnEditar.setBounds(300, 140, 95, 25);
 		btnEditar.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				if (selectedElement != -1) {
+				if (selectedElement > 0) {
 					JFrame frameEditItem = new JFrame("Editar");
 					frameEditItem.setBounds(100, 100, 500, 350);
 					frameEditItem.getContentPane().setLayout(null);
@@ -82,28 +154,23 @@ public class Painel {
 					JTextField textFieldIdade = new JTextField();
 					textFieldIdade.setBounds(50, 110, 150, 30);
 
-					try {
-						textFieldNome.setText(ts.getLinhas()[selectedElement - 1][1]);
-						textFieldIdade.setText(ts.getLinhas()[selectedElement - 1][2]);
-					} catch (IOException e1) {
-						// TODO Auto-generated catch block
-						e1.printStackTrace();
-					}
+					textFieldNome.setText(rowSelected[1]);
+					textFieldIdade.setText(rowSelected[2]);
 
 					JButton btnEditar = new JButton("Editar");
 					btnEditar.setBounds(50, 180, 95, 25);
 					btnEditar.addActionListener(new ActionListener() {
 						public void actionPerformed(ActionEvent e) {
-							frameEditItem.setVisible(false);
-							String[] valueTochange = new String[3];
-							valueTochange[0] = Integer.toString(selectedElement);
+							String valueTochange[] = new String[3];
+							valueTochange[0] = rowSelected[0];
 							valueTochange[1] = textFieldNome.getText();
 							valueTochange[2] = textFieldIdade.getText();
+							frameEditItem.setVisible(false);
 							try {
 								ts.updateData(valueTochange);
-								new Painel().montaTela();
+								frame.setVisible(false);
+								new Painel(filtrarDados(textFieldBuscar.getText()), textFieldBuscar.getText()).montaTela();
 							} catch (IOException e1) {
-								// TODO Auto-generated catch block
 								e1.printStackTrace();
 							}
 						}
@@ -122,15 +189,15 @@ public class Painel {
 
 	public JButton montaBtnRemover() {
 		JButton btnRemover = new JButton("Remover");
-		btnRemover.setBounds(300, 130, 95, 25);
+		btnRemover.setBounds(300, 180, 95, 25);
 
 		btnRemover.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				if (selectedElement >= 0) {
 					try {
-						System.out.println(selectedElement);
-						ts.removeData(selectedElement);
-						new Painel().montaTela();
+						ts.removeData(rowSelected[0]);
+						frame.setVisible(false);
+						new Painel(filtrarDados(textFieldBuscar.getText()), textFieldBuscar.getText()).montaTela();
 					} catch (IOException e1) {
 						e1.printStackTrace();
 					}
@@ -143,7 +210,7 @@ public class Painel {
 
 	public JButton montaBtnAdicionar() {
 		JButton btnAdicionar = new JButton("Adicionar");
-		btnAdicionar.setBounds(300, 30, 95, 25);
+		btnAdicionar.setBounds(300, 100, 95, 25);
 
 		btnAdicionar.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -178,7 +245,8 @@ public class Painel {
 						frameAddItem.setVisible(false);
 						try {
 							ts.setData(textFieldNome.getText(), textFieldIdade.getText());
-							new Painel().montaTela();
+							frame.setVisible(false);
+							new Painel(ts.getLinhas(), "").montaTela();
 						} catch (IOException e1) {
 							e1.printStackTrace();
 						}

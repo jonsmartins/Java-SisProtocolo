@@ -1,26 +1,23 @@
 package br.com.uva;
 
-import java.io.File;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
-import javax.swing.*;
+
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPasswordField;
 import javax.swing.JTextField;
-import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 
 public class Login {
 	public static void main(String args[]) throws IOException {
-		Painel painel = new Painel();
-		JFrame telaPainel = painel.montaTela();
-
+		Test ts = new Test();
 		//carregando meu arraylist de usuarios
         ArrayList<Usuarios> usuarios = new ArrayList<Usuarios>();
         try{
@@ -40,7 +37,7 @@ public class Login {
             e.printStackTrace();
         }
 
-		// começa a preparar a janela Home
+		// comeÃ§a a preparar a janela Home
 		JFrame frame = new JFrame("Protocolos");
 
 		// Cria label e textField do Login
@@ -94,7 +91,13 @@ public class Login {
 				}
 				if(validacao==true){
 					frame.setVisible(false);
-					telaPainel.setVisible(true);
+					try {
+						Painel pn = new Painel(ts.getLinhas(), "");
+						pn.montaTela();
+					} catch (IOException e1) {
+						// TODO Auto-generated catch block
+						e1.printStackTrace();
+					}
 				}else{
 					erroframe.setVisible(true);
 					erroframe.add(errolb);

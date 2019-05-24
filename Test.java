@@ -16,11 +16,7 @@ import java.util.Scanner;
 class Test {
 
 	public static void main(String ar[]) throws IOException {
-		Test test = new Test();
-// 		test.setInformacao();
-//		test.updateData();
-//		test.getNextId();
-//		System.out.println(test.contaLinhas());
+//		Test test = new Test();
 	}
 
 	public String[][] getLinhas() throws IOException {
@@ -57,35 +53,25 @@ class Test {
 			qtdLinha = linhaLeitura.getLineNumber();
 
 		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		return qtdLinha;
 	}
 
-	public void removeData(int lineToRemove) {
-		try {
-			BufferedReader br = new BufferedReader(new FileReader("database.txt"));
-			StringBuffer sb = new StringBuffer("");
-			int linenumber = 1;
-			String line;
-
-			while ((line = br.readLine()) != null) {
-				if (linenumber < lineToRemove || linenumber >= lineToRemove + 1) {
-					sb.append(line + String.format("%n", ""));
-				}
-				linenumber++;
+	public void removeData(String idToRemoveLine) throws IOException {
+		BufferedReader br = new BufferedReader(new FileReader("database.txt"));
+		StringBuffer sb = new StringBuffer("");
+		String line;
+		String[] lineElements;
+		while ((line = br.readLine()) != null) {
+			lineElements = line.split(",");
+			if (!lineElements[0].equals(idToRemoveLine)) {
+				sb.append(line + String.format("%n", ""));
 			}
-			if (lineToRemove + 1 > linenumber)
-				System.out.println("Fim do arquivo");
-			br.close();
-
-			FileWriter fw = new FileWriter(new File("database.txt"));
-			fw.write(sb.toString());
-			fw.close();
-		} catch (Exception e) {
-			e.printStackTrace();
 		}
+		FileWriter fw = new FileWriter(new File("database.txt"));
+		fw.write(sb.toString());
+		fw.close();
 	}
 
 	public void setData(String nome, String idade) {
@@ -128,16 +114,15 @@ class Test {
 	public void updateData(String[] strings) throws IOException {
 		BufferedReader br = new BufferedReader(new FileReader("database.txt"));
 		StringBuffer sb = new StringBuffer("");
-		int linenumber = 1;
 		String line;
-
+		String[] lineElements;
 		while ((line = br.readLine()) != null) {
-			if (Integer.parseInt(strings[0]) == linenumber) {
+			lineElements = line.split(",");
+			if (lineElements[0].equals(strings[0])) {
 				sb.append(strings[0] + "," + strings[1] + "," + strings[2] + String.format("%n", ""));
 			} else {
 				sb.append(line + String.format("%n", ""));
 			}
-			linenumber++;
 		}
 		br.close();
 		File f = new File("database.txt");
