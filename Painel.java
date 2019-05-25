@@ -28,11 +28,6 @@ public class Painel {
 	int selectedElement = -1;
 	String[] rowSelected = new String[3];
 
-	//public static void main(String[] args) throws IOException {
-	//	Painel pn = new Painel(ts.getLinhas(), "");
-	//pn.montaTela();
-	//}
-
 	Painel(String[][] linhas, String textFieldBuscar) {
 		linhas_tabela = linhas;
 		valorDeBusca = textFieldBuscar;
@@ -78,7 +73,7 @@ public class Painel {
 				if (i < ts.contaLinhas() && ts.getLinhas()[i][j].contains(dadoBuscado)) {
 					lista.put(qtdLinhas, ts.getLinhas()[i]);
 					qtdLinhas++;
-					j = 0;
+					j = -1;
 					i++;
 				}
 			}
