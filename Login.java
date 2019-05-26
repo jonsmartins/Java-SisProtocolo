@@ -18,26 +18,26 @@ import javax.swing.JTextField;
 public class Login {
 	public static void main(String args[]) throws IOException {
 		Test ts = new Test();
-		//carregando meu arraylist de usuarios
-        ArrayList<Usuarios> usuarios = new ArrayList<Usuarios>();
-        try{
-		    File bduser = new File("user.txt");
-		    BufferedReader bufferedReader = new BufferedReader(new FileReader(bduser));
-		    String line;
- 		    while((line = bufferedReader.readLine()) != null) {
-                String usuario = line.split(":")[0];
-                String senha = line.split(":")[1];
-        	    Usuarios us = new Usuarios(usuario, senha);
+		// carregando meu arraylist de usuarios
+		ArrayList<Usuarios> usuarios = new ArrayList<Usuarios>();
+		try {
+			File bduser = new File("user.txt");
+			BufferedReader bufferedReader = new BufferedReader(new FileReader(bduser));
+			String line;
+			while ((line = bufferedReader.readLine()) != null) {
+				String usuario = line.split(":")[0];
+				String senha = line.split(":")[1];
+				Usuarios us = new Usuarios(usuario, senha);
 				usuarios.add(us);
-				System.out.println(usuario+"\n"+senha);
-            }
-            bufferedReader.close();  
-        }catch(IOException e){
-            System.out.println("Ocorreu um erro");
-            e.printStackTrace();
-        }
+				System.out.println(usuario + "\n" + senha);
+			}
+			bufferedReader.close();
+		} catch (IOException e) {
+			System.out.println("Ocorreu um erro");
+			e.printStackTrace();
+		}
 
-		// comeÃ§a a preparar a janela Home
+		// começa a preparar a janela Home
 		JFrame frame = new JFrame("Protocolos");
 
 		// Cria label e textField do Login
@@ -52,49 +52,50 @@ public class Login {
 		JPasswordField textFieldSenha = new JPasswordField();
 		textFieldSenha.setBounds(25, 160, 170, 40);
 
-		//Logouva
+		// Logouva
 		ImageIcon imglogo = new ImageIcon("uvalogo.png");
 		JLabel logo = new JLabel(imglogo);
 		logo.setBounds(200, 40, 180, 100);
 		logo.setVisible(true);
 
-		//criando janela de erro
+		// criando janela de erro
 		JFrame erroframe = new JFrame("Erro");
-		erroframe.setBounds(800,400,290,170);
+		erroframe.setBounds(800, 400, 290, 170);
 		erroframe.setLayout(null);
-		JLabel errolb = new JLabel("Login ou senha invalidos");	
+		JLabel errolb = new JLabel("Login ou senha invalidos");
 		errolb.setBounds(50, 25, 200, 70);
 		JButton btnErro = new JButton("Ok");
 		btnErro.setBounds(100, 80, 50, 30);
-		btnErro.addActionListener(new ActionListener(){
-		public void actionPerformed(ActionEvent e){
-			erroframe.setVisible(false);
-		}
+		btnErro.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				erroframe.setVisible(false);
+			}
 		});
 
 		// Cria botao entrar
 		JButton btnEntrar = new JButton("Entrar");
-		btnEntrar.setBounds(250, 160, 100, 50);;
-		btnEntrar.addActionListener(new ActionListener(){
-			public void actionPerformed(ActionEvent e){
-				
-				//validando informacoes
+		btnEntrar.setBounds(250, 160, 100, 50);
+		;
+		btnEntrar.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+
+				// validando informacoes
 				boolean validacao = false;
-				for(int i=0; i<usuarios.size();i++){
+				for (int i = 0; i < usuarios.size(); i++) {
 					String user1 = usuarios.get(i).getNome();
 					String user2 = textFieldLogin.getText();
 					String pass1 = usuarios.get(i).getSenha();
 					String pass2 = textFieldSenha.getText();
-					if(user1.equals(user2) && pass1.equals(pass2)){
+					if (user1.equals(user2) && pass1.equals(pass2)) {
 						validacao = true;
-					}							
+					}
 				}
-				if(validacao==true){
+				if (validacao == true) {
 					String login = textFieldLogin.getText();
 					String pass = textFieldSenha.getText();
 					Usuarios usuario = new Usuarios(login, pass);
 					usuario.createFile();
-					String fl = usuario.getNome()+".txt";
+					String fl = usuario.getNome() + ".txt";
 					File file = new File(fl);
 					frame.setVisible(false);
 					try {
@@ -104,7 +105,7 @@ public class Login {
 						// TODO Auto-generated catch block
 						e1.printStackTrace();
 					}
-				}else{
+				} else {
 					erroframe.setVisible(true);
 					erroframe.add(errolb);
 					erroframe.add(btnErro);
@@ -120,9 +121,9 @@ public class Login {
 		frame.add(textFieldSenha);
 		frame.add(logo);
 		frame.add(btnEntrar);
-		
+
 		// Adiciona estilos para a tela
-		//frame.setSize(400, 300);
+		// frame.setSize(400, 300);
 		frame.setBounds(800, 400, 400, 300);
 		frame.setLayout(null);
 		frame.setVisible(true);

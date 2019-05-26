@@ -16,7 +16,7 @@ import java.util.Scanner;
 class Test {
 
 	public String[][] getLinhas(File file) throws IOException {
-		//String fl = file;
+		// String fl = file;
 		Scanner sc = new Scanner(new FileReader(file));
 		List<String> lines = new ArrayList<String>();
 		while (sc.hasNextLine()) {
@@ -32,18 +32,19 @@ class Test {
 				result[i][j] = values[j];
 			}
 		}
+		sc.close();
 		return result;
 	}
 
 	public String[] getColunas() {
-		String columns[] = { "ID", "NOME", "IDADE" };
+		String columns[] = { "ID", "NOME", "VALOR", "DATA" };
 		return columns;
 	}
 
 	public int contaLinhas(File file) throws IOException {
 		int qtdLinha = 0;
 		try {
-			//File arquivoLeitura = new File(file);
+			// File arquivoLeitura = new File(file);
 			LineNumberReader linhaLeitura;
 			linhaLeitura = new LineNumberReader(new FileReader(file));
 			linhaLeitura.skip(file.length());
@@ -69,34 +70,21 @@ class Test {
 		FileWriter fw = new FileWriter(file);
 		fw.write(sb.toString());
 		fw.close();
+		br.close();
 	}
 
-	public void setData(String nome, String idade, File file) {
-		
-			/*
-		try{
-			File myObj = new File(file);
-			if (myObj.createNewFile()) {
-				System.out.println("File created: " + myObj.getName());
-			} else {
-				System.out.println("File already exists.");
-			}
-		} catch (IOException e) {
-			System.out.println("An error occurred.");
-			e.printStackTrace();
-		}*/
-
+	public void setData(String nome, String valor, String data, File file) {
 		try {
-			//File f = new File(file);
+			// File f = new File(file);
 			PrintWriter pw = new PrintWriter(new FileOutputStream(file, true));
-			pw.append(getNextId(file) + "," + nome + "," + idade + String.format("%n", ""));
+			pw.append(getProximoId(file) + "," + nome + "," + valor + "," + data + String.format("%n", ""));
 			pw.close();
 		} catch (Exception e) {
 			System.out.println("e: " + e);
 		}
 	}
 
-	public int getNextId(File file) throws IOException {
+	public int getProximoId(File file) throws IOException {
 
 		if (contaLinhas(file) == 0) {
 			return 1;
@@ -119,13 +107,13 @@ class Test {
 		while ((line = br.readLine()) != null) {
 			lineElements = line.split(",");
 			if (lineElements[0].equals(strings[0])) {
-				sb.append(strings[0] + "," + strings[1] + "," + strings[2] + String.format("%n", ""));
+				sb.append(strings[0] + "," + strings[1] + "," + strings[2] + "," + strings[3] + String.format("%n", ""));
 			} else {
 				sb.append(line + String.format("%n", ""));
 			}
 		}
 		br.close();
-		
+
 		PrintWriter pw = new PrintWriter(new FileOutputStream(file, false));
 		pw.print(sb.toString());
 		pw.close();

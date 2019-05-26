@@ -2,8 +2,8 @@ package br.com.uva;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.IOException;
 import java.io.File;
+import java.io.IOException;
 import java.util.HashMap;
 
 import javax.swing.JButton;
@@ -28,28 +28,28 @@ public class Painel {
 	Usuarios user;
 
 	int selectedElement = -1;
-	String[] rowSelected = new String[3];
+	String[] rowSelected = new String[ts.getColunas().length];
 
 	Painel(String[][] linhas, String textFieldBuscar, Usuarios usuario) {
 		this.linhas_tabela = linhas;
 		this.valorDeBusca = textFieldBuscar;
 		this.user = usuario;
 	}
-	//user.createFile();
-	//String fl = user.getNome()+".txt";
-	//File file = new File(fl);
-	
+	// user.createFile();
+	// String fl = user.getNome()+".txt";
+	// File file = new File(fl);
+
 	public void montaTela() throws IOException {
 		montaComponentsDeFiltro();
 		frame.getContentPane().add(montaBtnAdicionar());
 		frame.getContentPane().add(montaBtnEditar());
 		frame.getContentPane().add(montaBtnRemover());
 
-		frame.setBounds(800, 400, 550, 400);
+		frame.setBounds(800, 400, 650, 400);
 		frame.getContentPane().setLayout(null);
 		frame.setVisible(true);
 
-		scrollPane.setBounds(20, 100, 240, 190);
+		scrollPane.setBounds(20, 100, 300, 190);
 		frame.getContentPane().add(scrollPane);
 
 		if (linhas_tabela.length > 0) {
@@ -74,8 +74,8 @@ public class Painel {
 	public String[][] filtrarDados(String dadoBuscado, File file) throws IOException {
 		int qtdLinhas = 0;
 		HashMap<Integer, String[]> lista = new HashMap<Integer, String[]>();
-		//String fl = user.getNome()+".txt";
-		//File file = new File(fl);
+		// String fl = user.getNome()+".txt";
+		// File file = new File(fl);
 		for (int i = 0; i < ts.contaLinhas(file); i++) {
 			for (int j = 0; j < ts.getColunas().length; j++) {
 				if (i < ts.contaLinhas(file) && ts.getLinhas(file)[i][j].contains(dadoBuscado)) {
@@ -102,17 +102,18 @@ public class Painel {
 		textFieldBuscar.setBounds(20, 50, 240, 25);
 
 		JButton btnBuscar = new JButton("Buscar");
-		btnBuscar.setBounds(300, 50, 95, 25);
+		btnBuscar.setBounds(350, 50, 95, 25);
 		JButton btnLimpar = new JButton("Limpar");
-		btnLimpar.setBounds(400, 50, 95, 25);
+		btnLimpar.setBounds(450, 50, 95, 25);
 
 		btnBuscar.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				frame.setVisible(false);
 				try {
-					String fl = user.getNome()+".txt";
+					String fl = user.getNome() + ".txt";
 					File file = new File(fl);
-					new Painel(filtrarDados(textFieldBuscar.getText(), file), textFieldBuscar.getText(), user).montaTela();
+					new Painel(filtrarDados(textFieldBuscar.getText(), file), textFieldBuscar.getText(), user)
+							.montaTela();
 				} catch (IOException e1) {
 					e1.printStackTrace();
 				}
@@ -123,7 +124,7 @@ public class Painel {
 			public void actionPerformed(ActionEvent e) {
 				frame.setVisible(false);
 				try {
-					String fl = user.getNome()+".txt";
+					String fl = user.getNome() + ".txt";
 					File file = new File(fl);
 					new Painel(ts.getLinhas(file), "", user).montaTela();
 				} catch (IOException e1) {
@@ -140,7 +141,7 @@ public class Painel {
 
 	public JButton montaBtnEditar() {
 		JButton btnEditar = new JButton("Editar");
-		btnEditar.setBounds(300, 140, 95, 25);
+		btnEditar.setBounds(350, 140, 95, 25);
 		btnEditar.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				if (selectedElement > 0) {
@@ -155,26 +156,42 @@ public class Painel {
 					JTextField textFieldNome = new JTextField();
 					textFieldNome.setBounds(50, 50, 150, 30);
 
-					// Cria label e textField da Idade
-					JLabel labelIdade = new JLabel("Idade");
-					labelIdade.setBounds(50, 80, 100, 30);
-					JTextField textFieldIdade = new JTextField();
-					textFieldIdade.setBounds(50, 110, 150, 30);
+					// Cria label e textField da Valor
+					JLabel labelValor = new JLabel("Valor");
+					labelValor.setBounds(50, 80, 100, 30);
+					JTextField textFieldValor = new JTextField();
+					textFieldValor.setBounds(50, 110, 150, 30);
+					
+					// Cria label e textField da Data
+					JLabel labelData = new JLabel("Data");
+					labelData.setBounds(50, 140, 100, 30);
+					JTextField textFieldData = new JTextField();
+					textFieldData.setBounds(50, 170, 150, 30);
 
 					textFieldNome.setText(rowSelected[1]);
-					textFieldIdade.setText(rowSelected[2]);
+					textFieldValor.setText(rowSelected[2]);
+					textFieldData.setText(rowSelected[3]);
+					
+					JButton jBtnEscolheData = new JButton("...");
+					jBtnEscolheData.setBounds(205, 170, 60, 30);
+					jBtnEscolheData.addActionListener(new ActionListener() {
+						public void actionPerformed(ActionEvent ae) {
+							textFieldData.setText(new EscolheData(frame).setDataEscolhida());
+						}
+					});
 
 					JButton btnEditar = new JButton("Editar");
-					btnEditar.setBounds(50, 180, 95, 25);
+					btnEditar.setBounds(50, 220, 95, 25);
 					btnEditar.addActionListener(new ActionListener() {
 						public void actionPerformed(ActionEvent e) {
-							String valueTochange[] = new String[3];
+							String valueTochange[] = new String[ts.getColunas().length];
 							valueTochange[0] = rowSelected[0];
 							valueTochange[1] = textFieldNome.getText();
-							valueTochange[2] = textFieldIdade.getText();
+							valueTochange[2] = textFieldValor.getText();
+							valueTochange[3] = textFieldData.getText();
 							frameEditItem.setVisible(false);
 							try {
-								String fl = user.getNome()+".txt";
+								String fl = user.getNome() + ".txt";
 								File file = new File(fl);
 								ts.updateData(valueTochange, file);
 								frame.setVisible(false);
@@ -188,8 +205,11 @@ public class Painel {
 					frameEditItem.getContentPane().add(btnEditar);
 					frameEditItem.getContentPane().add(labelNome);
 					frameEditItem.getContentPane().add(textFieldNome);
-					frameEditItem.getContentPane().add(labelIdade);
-					frameEditItem.getContentPane().add(textFieldIdade);
+					frameEditItem.getContentPane().add(labelValor);
+					frameEditItem.getContentPane().add(textFieldValor);
+					frameEditItem.getContentPane().add(labelData);
+					frameEditItem.getContentPane().add(textFieldData);
+					frameEditItem.getContentPane().add(jBtnEscolheData);
 				}
 			}
 		});
@@ -198,17 +218,18 @@ public class Painel {
 
 	public JButton montaBtnRemover() {
 		JButton btnRemover = new JButton("Remover");
-		btnRemover.setBounds(300, 180, 95, 25);
+		btnRemover.setBounds(350, 180, 95, 25);
 
 		btnRemover.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				if (selectedElement >= 0) {
 					try {
-						String fl = user.getNome()+".txt";
+						String fl = user.getNome() + ".txt";
 						File file = new File(fl);
 						ts.removeData(rowSelected[0], file);
 						frame.setVisible(false);
-						new Painel(filtrarDados(textFieldBuscar.getText(), file), textFieldBuscar.getText(), user).montaTela();
+						new Painel(filtrarDados(textFieldBuscar.getText(), file), textFieldBuscar.getText(), user)
+								.montaTela();
 					} catch (IOException e1) {
 						e1.printStackTrace();
 					}
@@ -221,7 +242,7 @@ public class Painel {
 
 	public JButton montaBtnAdicionar() {
 		JButton btnAdicionar = new JButton("Adicionar");
-		btnAdicionar.setBounds(300, 100, 95, 25);
+		btnAdicionar.setBounds(350, 100, 95, 25);
 
 		btnAdicionar.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -236,28 +257,46 @@ public class Painel {
 				JTextField textFieldNome = new JTextField();
 				textFieldNome.setBounds(50, 50, 150, 30);
 
-				// Cria label e textField da Idade
-				JLabel labelIdade = new JLabel("Idade");
-				labelIdade.setBounds(50, 80, 100, 30);
-				JTextField textFieldIdade = new JTextField();
-				textFieldIdade.setBounds(50, 110, 150, 30);
+				// Cria label e textField do Valor
+				JLabel labelValor = new JLabel("Valor");
+				labelValor.setBounds(50, 80, 100, 30);
+				JTextField textFieldValor = new JTextField();
+				textFieldValor.setBounds(50, 110, 150, 30);
+
+				// Cria label e textField da Data
+				JLabel labelData = new JLabel("Data");
+				labelData.setBounds(50, 140, 100, 30);
+				JTextField textFieldData = new JTextField();
+				textFieldData.setBounds(50, 170, 150, 30);
+
+				JButton jBtnEscolheData = new JButton("...");
+				jBtnEscolheData.setBounds(205, 170, 60, 30);
+				jBtnEscolheData.addActionListener(new ActionListener() {
+					public void actionPerformed(ActionEvent ae) {
+						textFieldData.setText(new EscolheData(frame).setDataEscolhida());
+					}
+				});
 
 				JButton btnAdicionarNovo = new JButton("Adicionar");
-				btnAdicionarNovo.setBounds(50, 180, 95, 25);
+				btnAdicionarNovo.setBounds(50, 220, 95, 25);
 
 				frameAddItem.getContentPane().add(btnAdicionarNovo);
 				frameAddItem.getContentPane().add(labelNome);
 				frameAddItem.getContentPane().add(textFieldNome);
-				frameAddItem.getContentPane().add(labelIdade);
-				frameAddItem.getContentPane().add(textFieldIdade);
+				frameAddItem.getContentPane().add(labelValor);
+				frameAddItem.getContentPane().add(textFieldValor);
+				frameAddItem.getContentPane().add(labelData);
+				frameAddItem.getContentPane().add(textFieldData);
+				frameAddItem.getContentPane().add(jBtnEscolheData);
 
 				btnAdicionarNovo.addActionListener(new ActionListener() {
 					public void actionPerformed(ActionEvent e) {
 						frameAddItem.setVisible(false);
 						try {
-							String fl = user.getNome()+".txt";
+							String fl = user.getNome() + ".txt";
 							File file = new File(fl);
-							ts.setData(textFieldNome.getText(), textFieldIdade.getText(), file);
+							ts.setData(textFieldNome.getText(), textFieldValor.getText(), textFieldData.getText(),
+									file);
 							frame.setVisible(false);
 							new Painel(ts.getLinhas(file), "", user).montaTela();
 						} catch (Exception e1) {
