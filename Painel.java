@@ -3,6 +3,7 @@ package br.com.uva;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.IOException;
+import java.io.File;
 import java.util.HashMap;
 
 import javax.swing.JButton;
@@ -24,15 +25,20 @@ public class Painel {
 
 	String[][] linhas_tabela;
 	String valorDeBusca;
+	Usuarios user;
 
 	int selectedElement = -1;
 	String[] rowSelected = new String[3];
 
-	Painel(String[][] linhas, String textFieldBuscar) {
-		linhas_tabela = linhas;
-		valorDeBusca = textFieldBuscar;
+	Painel(String[][] linhas, String textFieldBuscar, Usuarios usuario) {
+		this.linhas_tabela = linhas;
+		this.valorDeBusca = textFieldBuscar;
+		this.user = usuario;
 	}
-
+	//user.createFile();
+	//String fl = user.getNome()+".txt";
+	//File file = new File(fl);
+	
 	public void montaTela() throws IOException {
 		montaComponentsDeFiltro();
 		frame.getContentPane().add(montaBtnAdicionar());
@@ -65,13 +71,15 @@ public class Painel {
 		scrollPane.setViewportView(table);
 	}
 
-	public String[][] filtrarDados(String dadoBuscado) throws IOException {
+	public String[][] filtrarDados(String dadoBuscado, File file) throws IOException {
 		int qtdLinhas = 0;
 		HashMap<Integer, String[]> lista = new HashMap<Integer, String[]>();
-		for (int i = 0; i < ts.contaLinhas(); i++) {
+		//String fl = user.getNome()+".txt";
+		//File file = new File(fl);
+		for (int i = 0; i < ts.contaLinhas(file); i++) {
 			for (int j = 0; j < ts.getColunas().length; j++) {
-				if (i < ts.contaLinhas() && ts.getLinhas()[i][j].contains(dadoBuscado)) {
-					lista.put(qtdLinhas, ts.getLinhas()[i]);
+				if (i < ts.contaLinhas(file) && ts.getLinhas(file)[i][j].contains(dadoBuscado)) {
+					lista.put(qtdLinhas, ts.getLinhas(file)[i]);
 					qtdLinhas++;
 					j = -1;
 					i++;
@@ -102,7 +110,9 @@ public class Painel {
 			public void actionPerformed(ActionEvent e) {
 				frame.setVisible(false);
 				try {
-					new Painel(filtrarDados(textFieldBuscar.getText()), textFieldBuscar.getText()).montaTela();
+					String fl = user.getNome()+".txt";
+					File file = new File(fl);
+					new Painel(filtrarDados(textFieldBuscar.getText(), file), textFieldBuscar.getText(), user).montaTela();
 				} catch (IOException e1) {
 					e1.printStackTrace();
 				}
@@ -113,7 +123,9 @@ public class Painel {
 			public void actionPerformed(ActionEvent e) {
 				frame.setVisible(false);
 				try {
-					new Painel(ts.getLinhas(), "").montaTela();
+					String fl = user.getNome()+".txt";
+					File file = new File(fl);
+					new Painel(ts.getLinhas(file), "", user).montaTela();
 				} catch (IOException e1) {
 					e1.printStackTrace();
 				}
@@ -162,9 +174,11 @@ public class Painel {
 							valueTochange[2] = textFieldIdade.getText();
 							frameEditItem.setVisible(false);
 							try {
-								ts.updateData(valueTochange);
+								String fl = user.getNome()+".txt";
+								File file = new File(fl);
+								ts.updateData(valueTochange, file);
 								frame.setVisible(false);
-								new Painel(filtrarDados(textFieldBuscar.getText()), textFieldBuscar.getText()).montaTela();
+								new Painel(filtrarDados(textFieldBuscar.getText(), file), textFieldBuscar.getText(), user).montaTela();
 							} catch (IOException e1) {
 								e1.printStackTrace();
 							}
@@ -190,9 +204,11 @@ public class Painel {
 			public void actionPerformed(ActionEvent e) {
 				if (selectedElement >= 0) {
 					try {
-						ts.removeData(rowSelected[0]);
+						String fl = user.getNome()+".txt";
+						File file = new File(fl);
+						ts.removeData(rowSelected[0], file);
 						frame.setVisible(false);
-						new Painel(filtrarDados(textFieldBuscar.getText()), textFieldBuscar.getText()).montaTela();
+						new Painel(filtrarDados(textFieldBuscar.getText(), file), textFieldBuscar.getText(), user).montaTela();
 					} catch (IOException e1) {
 						e1.printStackTrace();
 					}
@@ -239,10 +255,12 @@ public class Painel {
 					public void actionPerformed(ActionEvent e) {
 						frameAddItem.setVisible(false);
 						try {
-							ts.setData(textFieldNome.getText(), textFieldIdade.getText());
+							String fl = user.getNome()+".txt";
+							File file = new File(fl);
+							ts.setData(textFieldNome.getText(), textFieldIdade.getText(), file);
 							frame.setVisible(false);
-							new Painel(ts.getLinhas(), "").montaTela();
-						} catch (IOException e1) {
+							new Painel(ts.getLinhas(file), "", user).montaTela();
+						} catch (Exception e1) {
 							e1.printStackTrace();
 						}
 					}

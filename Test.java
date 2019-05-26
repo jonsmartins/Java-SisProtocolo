@@ -15,8 +15,9 @@ import java.util.Scanner;
 
 class Test {
 
-	public String[][] getLinhas() throws IOException {
-		Scanner sc = new Scanner(new File("database.txt"));
+	public String[][] getLinhas(File file) throws IOException {
+		//String fl = file;
+		Scanner sc = new Scanner(new FileReader(file));
 		List<String> lines = new ArrayList<String>();
 		while (sc.hasNextLine()) {
 			lines.add(sc.nextLine());
@@ -39,23 +40,23 @@ class Test {
 		return columns;
 	}
 
-	public int contaLinhas() throws IOException {
+	public int contaLinhas(File file) throws IOException {
 		int qtdLinha = 0;
 		try {
-			File arquivoLeitura = new File("database.txt");
+			//File arquivoLeitura = new File(file);
 			LineNumberReader linhaLeitura;
-			linhaLeitura = new LineNumberReader(new FileReader(arquivoLeitura));
-			linhaLeitura.skip(arquivoLeitura.length());
+			linhaLeitura = new LineNumberReader(new FileReader(file));
+			linhaLeitura.skip(file.length());
 			qtdLinha = linhaLeitura.getLineNumber();
-
+			linhaLeitura.close();
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		}
 		return qtdLinha;
 	}
 
-	public void removeData(String idToRemoveLine) throws IOException {
-		BufferedReader br = new BufferedReader(new FileReader("database.txt"));
+	public void removeData(String idToRemoveLine, File file) throws IOException {
+		BufferedReader br = new BufferedReader(new FileReader(file));
 		StringBuffer sb = new StringBuffer("");
 		String line;
 		String[] lineElements;
@@ -65,14 +66,16 @@ class Test {
 				sb.append(line + String.format("%n", ""));
 			}
 		}
-		FileWriter fw = new FileWriter(new File("database.txt"));
+		FileWriter fw = new FileWriter(file);
 		fw.write(sb.toString());
 		fw.close();
 	}
 
-	public void setData(String nome, String idade) {
-		try {
-			File myObj = new File("database.txt");
+	public void setData(String nome, String idade, File file) {
+		
+			/*
+		try{
+			File myObj = new File(file);
 			if (myObj.createNewFile()) {
 				System.out.println("File created: " + myObj.getName());
 			} else {
@@ -81,34 +84,35 @@ class Test {
 		} catch (IOException e) {
 			System.out.println("An error occurred.");
 			e.printStackTrace();
-		}
+		}*/
 
 		try {
-			File f = new File("database.txt");
-			PrintWriter pw = new PrintWriter(new FileOutputStream(f, true));
-			pw.append(getNextId() + "," + nome + "," + idade + String.format("%n", ""));
+			//File f = new File(file);
+			PrintWriter pw = new PrintWriter(new FileOutputStream(file, true));
+			pw.append(getNextId(file) + "," + nome + "," + idade + String.format("%n", ""));
 			pw.close();
 		} catch (Exception e) {
 			System.out.println("e: " + e);
 		}
 	}
 
-	public int getNextId() throws IOException {
-		if (contaLinhas() == 0) {
+	public int getNextId(File file) throws IOException {
+
+		if (contaLinhas(file) == 0) {
 			return 1;
 		}
 		int max = 0;
-		for (int i = 0; i < contaLinhas(); i++) {
-			max = Integer.parseInt(getLinhas()[i][0]);
-			if (max < Integer.parseInt(getLinhas()[i][0])) {
-				max = Integer.parseInt(getLinhas()[i][0]);
+		for (int i = 0; i < contaLinhas(file); i++) {
+			max = Integer.parseInt(getLinhas(file)[i][0]);
+			if (max < Integer.parseInt(getLinhas(file)[i][0])) {
+				max = Integer.parseInt(getLinhas(file)[i][0]);
 			}
 		}
 		return max + 1;
 	}
 
-	public void updateData(String[] strings) throws IOException {
-		BufferedReader br = new BufferedReader(new FileReader("database.txt"));
+	public void updateData(String[] strings, File file) throws IOException {
+		BufferedReader br = new BufferedReader(new FileReader(file));
 		StringBuffer sb = new StringBuffer("");
 		String line;
 		String[] lineElements;
@@ -121,8 +125,8 @@ class Test {
 			}
 		}
 		br.close();
-		File f = new File("database.txt");
-		PrintWriter pw = new PrintWriter(new FileOutputStream(f, false));
+		
+		PrintWriter pw = new PrintWriter(new FileOutputStream(file, false));
 		pw.print(sb.toString());
 		pw.close();
 	}

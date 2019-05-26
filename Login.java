@@ -90,9 +90,15 @@ public class Login {
 					}							
 				}
 				if(validacao==true){
+					String login = textFieldLogin.getText();
+					String pass = textFieldSenha.getText();
+					Usuarios usuario = new Usuarios(login, pass);
+					usuario.createFile();
+					String fl = usuario.getNome()+".txt";
+					File file = new File(fl);
 					frame.setVisible(false);
 					try {
-						Painel pn = new Painel(ts.getLinhas(), "");
+						Painel pn = new Painel(ts.getLinhas(file), "", usuario);
 						pn.montaTela();
 					} catch (IOException e1) {
 						// TODO Auto-generated catch block
