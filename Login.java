@@ -7,6 +7,7 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -18,8 +19,8 @@ import javax.swing.JTextField;
 public class Login {
 	public static void main(String args[]) throws IOException {
 		Test ts = new Test();
-		// carregando meu arraylist de usuarios
-		ArrayList<Usuarios> usuarios = new ArrayList<Usuarios>();
+		// carregando meu HashMap de usuarios
+		HashMap<String, String> usermap = new HashMap<String, String>();
 		try {
 			File bduser = new File("user.txt");
 			BufferedReader bufferedReader = new BufferedReader(new FileReader(bduser));
@@ -27,8 +28,7 @@ public class Login {
 			while ((line = bufferedReader.readLine()) != null) {
 				String usuario = line.split(":")[0];
 				String senha = line.split(":")[1];
-				Usuarios us = new Usuarios(usuario, senha);
-				usuarios.add(us);
+				usermap.put(usuario, senha);
 				System.out.println(usuario + "\n" + senha);
 			}
 			bufferedReader.close();
@@ -81,14 +81,17 @@ public class Login {
 
 				// validando informacoes
 				boolean validacao = false;
-				for (int i = 0; i < usuarios.size(); i++) {
-					String user1 = usuarios.get(i).getNome();
-					String user2 = textFieldLogin.getText();
-					String pass1 = usuarios.get(i).getSenha();
-					String pass2 = textFieldSenha.getText();
-					if (user1.equals(user2) && pass1.equals(pass2)) {
-						validacao = true;
+				try{
+					String user = textFieldLogin.getText();
+					String pass = textFieldSenha.getText();
+					if (usermap.get(user)!=null) {
+						String value = usermap.get(user);
+						if(value.equals(pass)){
+							validacao = true;
+						}
 					}
+				}catch(Exception exc){
+					exc.printStackTrace();
 				}
 				if (validacao == true) {
 					String login = textFieldLogin.getText();
