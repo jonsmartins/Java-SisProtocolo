@@ -6,6 +6,9 @@ public class Usuarios {
 	String usuario;
 	String senha;
 	File db;
+	int id = 1;
+	String destinatario, data;
+	double valor;
 
 	Usuarios(String usuario, String senha) {
 		this.usuario = usuario;
@@ -14,6 +17,34 @@ public class Usuarios {
 
 	Usuarios() {
 
+	}
+
+	public void acrementaId(){
+		this.id = id++;
+	}
+
+	public void setDestinatario(String nome) {
+		this.destinatario = nome;
+	}
+
+	public void setData(String data) {
+		this.data = data;
+	}
+
+	public void setValor(double valor) {
+		this.valor = valor;
+	}
+
+	public String getDestinatario() {
+		return this.destinatario;
+	}
+
+	public String getData() {
+		return this.data;
+	}
+
+	public double getValor() {
+		return this.valor;
 	}
 
 	public String getNome() {
