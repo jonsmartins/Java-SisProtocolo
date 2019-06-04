@@ -30,11 +30,15 @@ import javax.swing.table.TableModel;
 import javax.swing.table.TableRowSorter;
 
 public class PainelNovo {
+	Usuarios user;
+	PainelNovo(Usuarios usuario) {
+		user = usuario;
+	}
 
 	JTable table;
 	static DefaultTableModel model = new DefaultTableModel() {
 //		valida se o dado a ser alterado pertence ao seu tipo primitivo como String, Double, Integer
-//		Caso nao seja é feita uma validação que altera a cor da borda do campo para vermelho
+//		Caso nao seja Ã© feita uma validaÃ§Ã£o que altera a cor da borda do campo para vermelho
 		public Class getColumnClass(int column) {
 			Class returnValue = null;
 			if (column == 0) {
@@ -89,12 +93,21 @@ public class PainelNovo {
 		frame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
 		frame.addWindowListener(new WindowAdapter() {
 			public void windowClosing(WindowEvent e) {
-				if (JOptionPane.showConfirmDialog(null,
-						"Você quer mesmo sair? Antes de sair vamos salvar os dados armazenados", "Atenção",
-						JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE) == JOptionPane.YES_OPTION) {
+				JFrame frameopt = new JFrame();
+				
+				String[] options = { "Sair e Salvar", "Sair sem salvar", "Cancelar"};
+				// 0=Sair e salvar, 1=Sair sem salvar, 2=Cancelar
+				int resposta = JOptionPane.showOptionDialog(frameopt.getContentPane(),"Deseja realmente sair ?!","Saindo...", 0,JOptionPane.INFORMATION_MESSAGE,null,options,null);
+				if(resposta==0){
 					salvarDadosQueEstavamEmMemoria();
 					frame.setVisible(false);
 					frame.dispose();
+				}
+				else if(resposta==1){
+					System.exit(0);
+				}
+				else if(resposta==2){
+
 				}
 			}
 		});
@@ -103,7 +116,7 @@ public class PainelNovo {
 	public void salvarDadosQueEstavamEmMemoria() {
 		String lines = "";
 		try {
-			PrintWriter pw = new PrintWriter(new FileOutputStream("databaseTeste.txt", true));
+			PrintWriter pw = new PrintWriter(new FileOutputStream(user.getNome()+".txt", true));
 			for (int i = 0; i < model.getRowCount(); i++) {
 				for (int j = 0; j < model.getColumnCount(); j++) {
 					if (model.getColumnCount() == j + 1) {
@@ -223,7 +236,7 @@ public class PainelNovo {
 	}
 
 	public void getLinhas() throws IOException {
-		Scanner sc = new Scanner(new FileReader("database.txt"));
+		Scanner sc = new Scanner(new FileReader(user.getNome()+".txt"));
 		HashMap<Integer, Object[]> lines = new HashMap<>();
 		Integer i = 0;
 		while (sc.hasNextLine()) {
@@ -309,8 +322,8 @@ public class PainelNovo {
 		return btnAdicionar;
 	}
 
-	public static void main(String args[]) throws IOException {
-		PainelNovo painel = new PainelNovo();
-		painel.montaTela();
-	}
+	//public static void main(String args[]) throws IOException {
+	//	PainelNovo painel = new PainelNovo();
+	//	painel.montaTela();
+	//}
 }
