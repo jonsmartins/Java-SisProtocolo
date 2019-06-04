@@ -1,10 +1,14 @@
 package br.com.uva;
 
-import java.awt.ComponentOrientation;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -13,6 +17,7 @@ import java.util.Scanner;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
@@ -76,6 +81,43 @@ public class PainelNovo {
 		scrollPane.setBounds(20, 100, 300, 190);
 		frame.getContentPane().add(scrollPane);
 		scrollPane.setViewportView(table);
+
+		encerraPrograma();
+	}
+
+	public void encerraPrograma() {
+		frame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+		frame.addWindowListener(new WindowAdapter() {
+			public void windowClosing(WindowEvent e) {
+				if (JOptionPane.showConfirmDialog(null,
+						"Você quer mesmo sair? Antes de sair vamos salvar os dados armazenados", "Atenção",
+						JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE) == JOptionPane.YES_OPTION) {
+					salvarDadosQueEstavamEmMemoria();
+					frame.setVisible(false);
+					frame.dispose();
+				}
+			}
+		});
+	}
+
+	public void salvarDadosQueEstavamEmMemoria() {
+		String lines = "";
+		try {
+			PrintWriter pw = new PrintWriter(new FileOutputStream("databaseTeste.txt", true));
+			for (int i = 0; i < model.getRowCount(); i++) {
+				for (int j = 0; j < model.getColumnCount(); j++) {
+					if (model.getColumnCount() == j + 1) {
+						lines += model.getValueAt(i, j).toString() + String.format("%n", "");
+					} else {
+						lines += model.getValueAt(i, j).toString() + ",";
+					}
+				}
+			}
+			pw.append(lines);
+			pw.close();
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		}
 	}
 
 	public void alinharColunasParaEsquerda() {
@@ -158,6 +200,7 @@ public class PainelNovo {
 		frame.getContentPane().add(textFieldBuscar);
 		frame.getContentPane().add(btnBuscar);
 		frame.getContentPane().add(btnLimpar);
+
 	}
 
 	public JButton montaBtnMostrarValores() throws IOException {
@@ -166,9 +209,7 @@ public class PainelNovo {
 
 		btnMostraValores.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent event) {
-				if (model.getRowCount() != 0) {
-					System.out.println(model.getDataVector());
-				}
+				System.out.println(model.getDataVector());
 			}
 		});
 		return btnMostraValores;
@@ -251,7 +292,7 @@ public class PainelNovo {
 				btnAdicionarNovo.addActionListener(new ActionListener() {
 					public void actionPerformed(ActionEvent e) {
 						frameAddItem.setVisible(false);
-						
+
 						try {
 							Object[] rowValues = { getProximoId(), textFieldNome.getText(),
 									Double.parseDouble(textFieldValor.getText()), textFieldData.getText() };
@@ -271,9 +312,5 @@ public class PainelNovo {
 	public static void main(String args[]) throws IOException {
 		PainelNovo painel = new PainelNovo();
 		painel.montaTela();
-//		String data = "12/11/2018";
-//		String dataTest = "\\d{2}/\\d{2}/\\d{4}";
-//        boolean validaData = data.matches(dataTest);
-//		System.out.println(validaData);
 	}
 }
