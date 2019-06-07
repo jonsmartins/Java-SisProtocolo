@@ -9,6 +9,8 @@ import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -48,7 +50,6 @@ public class PainelNovo {
 			} else if (column == 2) {
 				returnValue = Double.class;
 			} else if (column == 3) {
-//				vai ser mudado para LocalDate
 				returnValue = String.class;
 			} else {
 				return Object.class;
@@ -69,7 +70,7 @@ public class PainelNovo {
 
 		table = new JTable(model);
 		table.setRowSelectionAllowed(true);
-
+		
 		alinharColunasParaEsquerda();
 		ordenaColunaEscolhida();
 
@@ -94,7 +95,7 @@ public class PainelNovo {
 		frame.addWindowListener(new WindowAdapter() {
 			public void windowClosing(WindowEvent e) {
 				JFrame frameopt = new JFrame();
-				
+
 				String[] options = { "Sair e Salvar", "Sair sem salvar", "Cancelar"};
 				// 0=Sair e salvar, 1=Sair sem salvar, 2=Cancelar
 				int resposta = JOptionPane.showOptionDialog(frameopt.getContentPane(),"Deseja realmente sair ?!","Saindo...", 0,JOptionPane.INFORMATION_MESSAGE,null,options,null);
@@ -103,11 +104,8 @@ public class PainelNovo {
 					frame.setVisible(false);
 					frame.dispose();
 				}
-				else if(resposta==1){
-					System.exit(0);
-				}
-				else if(resposta==2){
-
+					else if(resposta==1){
+						System.exit(0);
 				}
 			}
 		});
@@ -243,7 +241,9 @@ public class PainelNovo {
 			String[] arr = sc.nextLine().split(",");
 			int id = Integer.parseInt(arr[0]);
 			double salario = Double.parseDouble(arr[2]);
-			Object[] obj = { id, arr[1], salario, arr[3] };
+			DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+			LocalDate localDate = LocalDate.parse(arr[3], formatter);
+			Object[] obj = { id, arr[1], salario, localDate };
 			lines.put(i, obj);
 			i++;
 		}
@@ -321,9 +321,4 @@ public class PainelNovo {
 		});
 		return btnAdicionar;
 	}
-
-	//public static void main(String args[]) throws IOException {
-	//	PainelNovo painel = new PainelNovo();
-	//	painel.montaTela();
-	//}
 }
